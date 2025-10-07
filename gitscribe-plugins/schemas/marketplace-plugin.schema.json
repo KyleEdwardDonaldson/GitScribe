@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gitscribe.dev/schemas/marketplace-plugin.json",
+  "title": "Marketplace Plugin Metadata",
+  "description": "Schema for plugin metadata in the marketplace database",
+  "type": "object",
+  "required": [
+    "id",
+    "slug",
+    "name",
+    "description",
+    "version",
+    "author",
+    "downloadUrl",
+    "packageSize",
+    "checksum",
+    "category",
+    "permissions",
+    "publishedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 3,
+      "maxLength": 50,
+      "description": "URL-friendly identifier"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200
+    },
+    "longDescription": {
+      "type": "string",
+      "minLength": 50,
+      "maxLength": 10000,
+      "description": "Detailed description (Markdown supported)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9]+)?$"
+    },
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "verified": {
+          "type": "boolean",
+          "description": "Whether the author is verified"
+        }
+      }
+    },
+    "downloadUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "CDN URL to download the .gspl file"
+    },
+    "packageSize": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10485760,
+      "description": "Package size in bytes (max 10 MB)"
+    },
+    "checksum": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of the package"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "productivity",
+        "integrations",
+        "security",
+        "themes",
+        "workflows",
+        "utilities"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "network",
+          "filesystem:read",
+          "filesystem:write",
+          "shell:execute",
+          "clipboard",
+          "git:operations"
+        ]
+      }
+    },
+    "minVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Minimum GitScribe version"
+    },
+    "maxVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Maximum GitScribe version (optional)"
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["windows", "all"],
+      "default": "windows"
+    },
+    "downloads": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total download count"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Average rating (0-5 stars)"
+    },
+    "reviewCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of reviews"
+    },
+    "publishedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "icon": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to plugin icon (256x256 PNG)"
+    },
+    "screenshots": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "maxItems": 5
+    },
+    "videoUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Demo video URL (YouTube, Vimeo, etc.)"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether featured on marketplace homepage"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether verified/audited by GitScribe team"
+    },
+    "deprecated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the plugin is deprecated"
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri"
+    },
+    "license": {
+      "type": "string"
+    }
+  }
+}

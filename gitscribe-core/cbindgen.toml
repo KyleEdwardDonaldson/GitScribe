@@ -1,0 +1,22 @@
+# cbindgen configuration for generating C headers
+
+language = "C"
+
+# Include guard
+include_guard = "GITSCRIBE_CORE_H"
+
+# Header text
+header = """
+/**
+ * GitScribe Core - C API
+ *
+ * High-performance Git operations library
+ * Copyright (C) 2025 GitScribe
+ */
+"""
+
+# Enable C++ compatibility (adds extern "C" blocks)
+cpp_compat = true
+
+# Style
+style = "both"

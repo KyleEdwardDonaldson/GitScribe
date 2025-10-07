@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gitscribe.dev/schemas/icon-pack-manifest.json",
+  "title": "GitScribe Icon Pack Manifest",
+  "description": "Schema for icon pack manifest.json files",
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "description",
+    "author",
+    "style",
+    "icons"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50,
+      "description": "Display name of the icon pack"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version (e.g., 1.0.0)"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200,
+      "description": "Short description of the icon pack"
+    },
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "style": {
+      "type": "string",
+      "enum": [
+        "minimal",
+        "bold",
+        "neon",
+        "flat",
+        "gradient",
+        "outline",
+        "pixel",
+        "organic"
+      ],
+      "description": "Visual style of the icon pack"
+    },
+    "icons": {
+      "type": "object",
+      "required": [
+        "modified",
+        "added",
+        "deleted",
+        "conflicted",
+        "untracked",
+        "ignored"
+      ],
+      "properties": {
+        "modified": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_/-]+\\.ico$",
+          "description": "Path to modified file icon"
+        },
+        "added": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_/-]+\\.ico$",
+          "description": "Path to added file icon"
+        },
+        "deleted": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_/-]+\\.ico$",
+          "description": "Path to deleted file icon"
+        },
+        "conflicted": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_/-]+\\.ico$",
+          "description": "Path to conflicted file icon"
+        },
+        "untracked": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_/-]+\\.ico$",
+          "description": "Path to untracked file icon"
+        },
+        "ignored": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_/-]+\\.ico$",
+          "description": "Path to ignored file icon"
+        },
+        "clean": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_/-]+\\.ico$",
+          "description": "Path to clean file icon (optional)"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 30
+      },
+      "maxItems": 10,
+      "description": "Tags for search and categorization"
+    },
+    "colors": {
+      "type": "object",
+      "description": "Primary colors used in the icon pack",
+      "properties": {
+        "primary": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        "secondary": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        }
+      }
+    },
+    "license": {
+      "type": "string",
+      "description": "License (e.g., CC-BY-4.0, MIT)"
+    }
+  }
+}

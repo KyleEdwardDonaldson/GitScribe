@@ -1,0 +1,31 @@
+{
+  "name": "Neon City",
+  "version": "1.0.0",
+  "description": "Vibrant neon aesthetic perfect for night owls and cyberpunk enthusiasts",
+  "author": {
+    "name": "GitScribe Design Team",
+    "url": "https://gitscribe.dev"
+  },
+  "style": "neon",
+  "icons": {
+    "modified": "modified.ico",
+    "added": "added.ico",
+    "deleted": "deleted.ico",
+    "conflicted": "conflicted.ico",
+    "untracked": "untracked.ico",
+    "ignored": "ignored.ico",
+    "clean": "clean.ico"
+  },
+  "tags": [
+    "neon",
+    "vibrant",
+    "dark-theme",
+    "cyberpunk",
+    "colorful"
+  ],
+  "colors": {
+    "primary": "#00F0FF",
+    "secondary": "#FF00E5"
+  },
+  "license": "CC-BY-4.0"
+}

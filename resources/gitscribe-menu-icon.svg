@@ -1,0 +1,11 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Quill pen icon -->
+  <g transform="rotate(-45 16 16) translate(16, 16)">
+    <path d="M 0 0 L 9.6 9.6 L 7.68 11.52 L -1.92 1.92 Z"
+          fill="#1A1A1A"/>
+    <path d="M 9.6 9.6 Q 12.8 12.8 16 9.6"
+          stroke="#1A1A1A"
+          stroke-width="1.28"
+          fill="none"/>
+  </g>
+</svg>

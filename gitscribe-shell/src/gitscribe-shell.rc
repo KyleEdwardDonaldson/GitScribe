@@ -1,0 +1,80 @@
+#include "resource.h"
+#include <windows.h>
+
+// Version information
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     0,1,0,0
+PRODUCTVERSION  0,1,0,0
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_DLL
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "GitScribe"
+            VALUE "FileDescription",  "GitScribe Shell Extension"
+            VALUE "FileVersion",      "0.1.0.0"
+            VALUE "InternalName",     "GitScribeShell"
+            VALUE "LegalCopyright",   "Copyright (C) 2025"
+            VALUE "OriginalFilename", "GitScribeShell.dll"
+            VALUE "ProductName",      "GitScribe"
+            VALUE "ProductVersion",   "0.1.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+// Icon resources
+IDI_MODIFIED    ICON    "../resources/icon-packs/default/modified.ico"
+IDI_CLEAN       ICON    "../resources/icon-packs/default/clean.ico"
+IDI_ADDED       ICON    "../resources/icon-packs/default/added.ico"
+IDI_UNTRACKED   ICON    "../resources/icon-packs/default/untracked.ico"
+IDI_CONFLICTED  ICON    "../resources/icon-packs/default/conflicted.ico"
+IDI_IGNORED     ICON    "../resources/icon-packs/default/ignored.ico"
+IDI_MENU        ICON    "../resources/gitscribe-menu-icon.ico"
+
+// String resources
+STRINGTABLE
+BEGIN
+    IDS_MODIFIED    "GitScribe Modified"
+    IDS_CLEAN       "GitScribe Clean"
+    IDS_ADDED       "GitScribe Added"
+    IDS_UNTRACKED   "GitScribe Untracked"
+    IDS_CONFLICTED  "GitScribe Conflicted"
+    IDS_IGNORED     "GitScribe Ignored"
+END
+
+// Property page dialog
+IDD_GIT_PROPPAGE DIALOGEX 0, 0, 252, 218
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Git"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Repository", IDC_STATIC, 7, 7, 238, 50
+    LTEXT           "Path:", IDC_STATIC, 14, 20, 30, 8
+    EDITTEXT        IDC_GIT_REPO_PATH, 50, 18, 188, 12, ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    LTEXT           "Branch:", IDC_STATIC, 14, 35, 30, 8
+    EDITTEXT        IDC_GIT_BRANCH, 50, 33, 188, 12, ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+
+    GROUPBOX        "Status", IDC_STATIC, 7, 62, 238, 70
+    LTEXT           "State:", IDC_STATIC, 14, 75, 30, 8
+    EDITTEXT        IDC_GIT_STATE, 50, 73, 188, 12, ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    LTEXT           "Changes:", IDC_STATIC, 14, 90, 35, 8
+    EDITTEXT        IDC_GIT_MODIFIED, 50, 88, 188, 12, ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    LTEXT           "Sync:", IDC_STATIC, 14, 105, 30, 8
+    EDITTEXT        IDC_GIT_SYNC, 50, 103, 188, 12, ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+
+    GROUPBOX        "File", IDC_STATIC, 7, 137, 238, 35
+    LTEXT           "Status:", IDC_STATIC, 14, 150, 30, 8
+    EDITTEXT        IDC_GIT_FILE_STATUS, 50, 148, 188, 12, ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+
+    LTEXT           "GitScribe v0.1.0", IDC_STATIC, 7, 200, 100, 8
+    LTEXT           "Shell Extension", IDC_STATIC, 7, 210, 100, 8
+END

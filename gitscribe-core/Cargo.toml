@@ -1,0 +1,46 @@
+[package]
+name = "gitscribe-core"
+version = "0.1.0"
+edition = "2021"
+authors = ["GitScribe Team"]
+description = "High-performance Git operations library for GitScribe"
+license = "MPL-2.0"
+
+[lib]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[dependencies]
+git2 = "0.19"           # libgit2 bindings for Git operations
+rusqlite = { version = "0.32", features = ["bundled"] }  # SQLite for caching
+anyhow = "1.0"          # Error handling
+tracing = "0.1"         # Logging and instrumentation
+serde = { version = "1.0", features = ["derive"] }  # Serialization
+serde_json = "1.0"      # JSON serialization
+uuid = { version = "1.11", features = ["v4", "serde"] }  # UUID generation for stash IDs
+tokio = { version = "1.35", features = ["rt", "rt-multi-thread"], optional = true }
+
+# N-API bindings for Node.js (optional, only when building for Node)
+[dependencies.napi]
+version = "2.16"
+features = ["async", "serde-json", "tokio_rt"]
+optional = true
+
+[dependencies.napi-derive]
+version = "2.16"
+optional = true
+
+[features]
+default = []
+napi-bindings = ["napi", "napi-derive", "tokio"]
+
+[build-dependencies]
+cbindgen = "0.27"       # Generate C headers from Rust
+
+[dev-dependencies]
+tempfile = "3.8"        # Temporary directories for testing
+
+[profile.release]
+opt-level = 3           # Maximum optimization
+lto = true              # Link-time optimization
+codegen-units = 1       # Better optimization (slower compile)
+strip = true            # Strip symbols from binary

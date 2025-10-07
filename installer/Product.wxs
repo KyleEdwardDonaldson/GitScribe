@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ProductName = "GitScribe Status" ?>
+  <?define ProductVersion = "0.1.0.0" ?>
+  <?define Manufacturer = "GitScribe" ?>
+  <?define UpgradeCode = "{F8C3F5A0-1234-4567-89AB-123456789ABC}" ?>
+
+  <Product Id="*"
+           Name="$(var.ProductName)"
+           Language="1033"
+           Version="$(var.ProductVersion)"
+           Manufacturer="$(var.Manufacturer)"
+           UpgradeCode="$(var.UpgradeCode)">
+
+    <Package InstallerVersion="500"
+             Compressed="yes"
+             InstallScope="perMachine"
+             Description="GitScribe Status - Windows Git Overlay Icons"
+             Comments="See your Git status at a glance in Windows Explorer"
+             Manufacturer="$(var.Manufacturer)" />
+
+    <!-- Major upgrade: uninstall old version before installing new -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."
+                  AllowSameVersionUpgrades="yes" />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Require Windows 10 1809 or later -->
+    <Condition Message="This application requires Windows 10 version 1809 or later.">
+      <![CDATA[Installed OR (VersionNT >= 603)]]>
+    </Condition>
+
+    <!-- Require Administrator privileges -->
+    <Condition Message="You must be an administrator to install this product.">
+      Privileged
+    </Condition>
+
+    <!-- Check for Visual C++ Redistributable 2022 (x64) -->
+    <Property Id="VS2022REDIST">
+      <RegistrySearch Id="FindRedist2022"
+                      Root="HKLM"
+                      Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64"
+                      Name="Version"
+                      Type="raw" />
+    </Property>
+    <Condition Message="This application requires the Microsoft Visual C++ 2022 Redistributable (x64). Please install it from https://aka.ms/vs/17/release/vc_redist.x64.exe">
+      <![CDATA[Installed OR VS2022REDIST]]>
+    </Condition>
+
+    <!-- Features -->
+    <Feature Id="ProductFeature"
+             Title="GitScribe Status"
+             Level="1"
+             Description="Git overlay icons for Windows Explorer"
+             ConfigurableDirectory="INSTALLFOLDER">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="IconResources" />
+      <ComponentRef Id="RegistryEntries" />
+    </Feature>
+
+    <!-- UI -->
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <!-- Custom branding -->
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="Banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Dialog.bmp" />
+
+    <!-- Custom actions to restart Explorer -->
+    <CustomAction Id="KillExplorer"
+                  Execute="deferred"
+                  Impersonate="yes"
+                  ExeCommand='[SystemFolder]taskkill.exe /F /IM explorer.exe'
+                  Return="ignore" />
+
+    <CustomAction Id="StartExplorer"
+                  Execute="deferred"
+                  Impersonate="yes"
+                  ExeCommand='[SystemFolder]cmd.exe /c start explorer.exe'
+                  Return="ignore" />
+
+    <CustomAction Id="RegisterShellExtension"
+                  Directory="INSTALLFOLDER"
+                  ExeCommand='[SystemFolder]regsvr32.exe /s "[INSTALLFOLDER]GitScribeShell.dll"'
+                  Execute="deferred"
+                  Impersonate="no"
+                  Return="check" />
+
+    <CustomAction Id="UnregisterShellExtension"
+                  Directory="INSTALLFOLDER"
+                  ExeCommand='[SystemFolder]regsvr32.exe /u /s "[INSTALLFOLDER]GitScribeShell.dll"'
+                  Execute="deferred"
+                  Impersonate="no"
+                  Return="ignore" />
+
+    <!-- Install sequence -->
+    <InstallExecuteSequence>
+      <Custom Action="UnregisterShellExtension" Before="RemoveFiles">Installed AND NOT UPGRADINGPRODUCTCODE</Custom>
+      <Custom Action="RegisterShellExtension" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="KillExplorer" After="RegisterShellExtension">NOT Installed</Custom>
+      <Custom Action="StartExplorer" After="KillExplorer">NOT Installed</Custom>
+    </InstallExecuteSequence>
+
+    <!-- Directory structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="GitScribe">
+          <Directory Id="IconsFolder" Name="icons">
+            <Directory Id="ClassicTheme" Name="classic" />
+            <Directory Id="MinimalistTheme" Name="minimalist" />
+            <Directory Id="BoldTheme" Name="bold" />
+            <Directory Id="MonochromeTheme" Name="monochrome" />
+            <Directory Id="NeonTheme" Name="neon" />
+            <Directory Id="PastelTheme" Name="pastel" />
+            <Directory Id="CorporateTheme" Name="corporate" />
+            <Directory Id="EmojiTheme" Name="emoji" />
+            <Directory Id="FlatTheme" Name="flat" />
+            <Directory Id="GlassTheme" Name="glass" />
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <!-- Start Menu shortcut -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="GitScribe" />
+      </Directory>
+    </Directory>
+  </Product>
+
+  <!-- Components -->
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <!-- Core DLLs -->
+      <Component Id="GitScribeShellDLL" Guid="{A1B2C3D4-5678-90AB-CDEF-123456789001}" Win64="yes">
+        <File Id="GitScribeShellDLL"
+              Source="$(var.BinDir)\GitScribeShell.dll"
+              KeyPath="yes"
+              Checksum="yes" />
+      </Component>
+
+      <Component Id="GitScribeCoreDLL" Guid="{A1B2C3D4-5678-90AB-CDEF-123456789002}" Win64="yes">
+        <File Id="GitScribeCoreDLL"
+              Source="$(var.BinDir)\gitscribe_core.dll"
+              KeyPath="yes"
+              Checksum="yes" />
+      </Component>
+
+      <!-- Documentation -->
+      <Component Id="Documentation" Guid="{A1B2C3D4-5678-90AB-CDEF-123456789003}" Win64="yes">
+        <File Id="README" Source="..\gitscribe-shell\README.md" />
+        <File Id="INSTALL" Source="..\gitscribe-shell\INSTALL.md" />
+        <File Id="TROUBLESHOOTING" Source="..\gitscribe-shell\TROUBLESHOOTING.md" />
+        <File Id="LICENSE" Source="..\gitscribe-shell\LICENSE.md" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Icon Resources -->
+    <ComponentGroup Id="IconResources">
+      <!-- Classic Theme -->
+      <Component Id="ClassicModified" Directory="ClassicTheme" Guid="{B1B2C3D4-5678-90AB-CDEF-123456789010}" Win64="yes">
+        <File Id="ClassicModified" Source="$(var.IconsDir)\classic\modified.ico" KeyPath="yes" />
+      </Component>
+      <Component Id="ClassicAdded" Directory="ClassicTheme" Guid="{B1B2C3D4-5678-90AB-CDEF-123456789011}" Win64="yes">
+        <File Id="ClassicAdded" Source="$(var.IconsDir)\classic\added.ico" KeyPath="yes" />
+      </Component>
+      <Component Id="ClassicDeleted" Directory="ClassicTheme" Guid="{B1B2C3D4-5678-90AB-CDEF-123456789012}" Win64="yes">
+        <File Id="ClassicDeleted" Source="$(var.IconsDir)\classic\deleted.ico" KeyPath="yes" />
+      </Component>
+      <Component Id="ClassicUntracked" Directory="ClassicTheme" Guid="{B1B2C3D4-5678-90AB-CDEF-123456789013}" Win64="yes">
+        <File Id="ClassicUntracked" Source="$(var.IconsDir)\classic\untracked.ico" KeyPath="yes" />
+      </Component>
+      <Component Id="ClassicConflicted" Directory="ClassicTheme" Guid="{B1B2C3D4-5678-90AB-CDEF-123456789014}" Win64="yes">
+        <File Id="ClassicConflicted" Source="$(var.IconsDir)\classic\conflicted.ico" KeyPath="yes" />
+      </Component>
+      <Component Id="ClassicIgnored" Directory="ClassicTheme" Guid="{B1B2C3D4-5678-90AB-CDEF-123456789015}" Win64="yes">
+        <File Id="ClassicIgnored" Source="$(var.IconsDir)\classic\ignored.ico" KeyPath="yes" />
+      </Component>
+
+      <!-- Additional themes would be added here in full installer -->
+      <!-- For v0.1.0, we'll include all 10 themes but only show Classic by default -->
+    </ComponentGroup>
+
+    <!-- Registry Entries -->
+    <Component Id="RegistryEntries" Directory="INSTALLFOLDER" Guid="{C1B2C3D4-5678-90AB-CDEF-123456789020}" Win64="yes">
+      <!-- Application settings -->
+      <RegistryKey Root="HKLM" Key="Software\GitScribe\Status">
+        <RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]" KeyPath="yes" />
+        <RegistryValue Type="string" Name="Version" Value="$(var.ProductVersion)" />
+        <RegistryValue Type="string" Name="IconTheme" Value="classic" />
+      </RegistryKey>
+
+      <!-- Uninstall information -->
+      <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\$(var.ProductName)">
+        <RegistryValue Type="string" Name="DisplayName" Value="$(var.ProductName)" />
+        <RegistryValue Type="string" Name="DisplayVersion" Value="$(var.ProductVersion)" />
+        <RegistryValue Type="string" Name="Publisher" Value="$(var.Manufacturer)" />
+        <RegistryValue Type="string" Name="InstallLocation" Value="[INSTALLFOLDER]" />
+        <RegistryValue Type="string" Name="HelpLink" Value="https://gitscribe.dev/docs" />
+        <RegistryValue Type="string" Name="URLInfoAbout" Value="https://gitscribe.dev" />
+        <RegistryValue Type="string" Name="URLUpdateInfo" Value="https://github.com/KyleEdwardDonaldson/GitScribe/releases" />
+        <RegistryValue Type="integer" Name="NoModify" Value="1" />
+        <RegistryValue Type="integer" Name="NoRepair" Value="1" />
+        <RegistryValue Type="integer" Name="EstimatedSize" Value="2048" />
+      </RegistryKey>
+    </Component>
+  </Fragment>
+</Wix>

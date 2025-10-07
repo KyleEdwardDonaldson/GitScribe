@@ -1,0 +1,688 @@
+openapi: 3.0.3
+info:
+  title: GitScribe Marketplace API
+  description: API for browsing, searching, and downloading plugins and icon packs
+  version: 1.0.0
+  contact:
+    name: GitScribe Team
+    email: team@gitscribe.dev
+    url: https://gitscribe.dev
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://gitscribe.dev/api/marketplace
+    description: Production server
+  - url: http://localhost:3000/api/marketplace
+    description: Development server
+
+tags:
+  - name: plugins
+    description: Plugin operations
+  - name: icon-packs
+    description: Icon pack operations
+  - name: themes
+    description: UI theme operations
+  - name: downloads
+    description: Download tracking
+  - name: reviews
+    description: User reviews and ratings
+  - name: admin
+    description: Admin operations (authentication required)
+
+paths:
+  /plugins:
+    get:
+      tags: [plugins]
+      summary: List all plugins
+      description: Get a paginated list of plugins with optional filtering
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [productivity, integrations, security, themes, workflows, utilities]
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Search query (searches name, description, keywords)
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [popular, recent, rating, name]
+            default: popular
+        - name: verified
+          in: query
+          description: Only show verified plugins
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Plugin'
+                  total:
+                    type: integer
+                  hasMore:
+                    type: boolean
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+
+  /plugins/{slug}:
+    get:
+      tags: [plugins]
+      summary: Get plugin details
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Plugin found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plugin'
+        '404':
+          description: Plugin not found
+
+  /plugins/featured:
+    get:
+      tags: [plugins]
+      summary: Get featured plugins
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plugin'
+
+  /icon-packs:
+    get:
+      tags: [icon-packs]
+      summary: List all icon packs
+      parameters:
+        - name: style
+          in: query
+          schema:
+            type: string
+            enum: [minimal, bold, neon, flat, gradient, outline, pixel, organic]
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [popular, recent, rating, name]
+            default: popular
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/IconPack'
+                  total:
+                    type: integer
+                  hasMore:
+                    type: boolean
+
+  /icon-packs/{slug}:
+    get:
+      tags: [icon-packs]
+      summary: Get icon pack details
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Icon pack found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IconPack'
+        '404':
+          description: Icon pack not found
+
+  /icon-packs/featured:
+    get:
+      tags: [icon-packs]
+      summary: Get featured icon packs
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IconPack'
+
+  /themes:
+    get:
+      tags: [themes]
+      summary: List all UI themes
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [popular, recent, rating, name]
+            default: popular
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Theme'
+
+  /themes/{slug}:
+    get:
+      tags: [themes]
+      summary: Get theme details
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Theme found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+
+  /downloads:
+    post:
+      tags: [downloads]
+      summary: Track a download
+      description: Records a download event for analytics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemId, itemType, version]
+              properties:
+                itemId:
+                  type: string
+                  format: uuid
+                itemType:
+                  type: string
+                  enum: [plugin, icon-pack, theme]
+                version:
+                  type: string
+      responses:
+        '201':
+          description: Download tracked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid request
+
+  /reviews:
+    post:
+      tags: [reviews]
+      summary: Submit a review
+      description: Submit a review for a plugin, icon pack, or theme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemId, itemType, rating]
+              properties:
+                itemId:
+                  type: string
+                  format: uuid
+                itemType:
+                  type: string
+                  enum: [plugin, icon-pack, theme]
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                comment:
+                  type: string
+                  maxLength: 1000
+      responses:
+        '201':
+          description: Review submitted
+        '400':
+          description: Invalid request
+        '401':
+          description: Authentication required
+
+  /reviews/{itemId}:
+    get:
+      tags: [reviews]
+      summary: Get reviews for an item
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [recent, helpful, rating]
+            default: recent
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Reviews found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+
+  /admin/submit/plugin:
+    post:
+      tags: [admin]
+      summary: Submit a plugin for review
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [package, metadata]
+              properties:
+                package:
+                  type: string
+                  format: binary
+                  description: Plugin package (.gspl file)
+                metadata:
+                  type: string
+                  description: JSON metadata
+      responses:
+        '201':
+          description: Plugin submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [pending_review]
+                  estimatedReviewTime:
+                    type: string
+        '400':
+          description: Invalid submission
+        '401':
+          description: Authentication required
+
+  /admin/submit/icon-pack:
+    post:
+      tags: [admin]
+      summary: Submit an icon pack
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [package, metadata]
+              properties:
+                package:
+                  type: string
+                  format: binary
+                  description: Icon pack (.zip file)
+                metadata:
+                  type: string
+                  description: JSON metadata
+      responses:
+        '201':
+          description: Icon pack submitted
+
+  /admin/review/{submissionId}:
+    post:
+      tags: [admin]
+      summary: Approve or reject a submission
+      description: Admin-only endpoint for reviewing submissions
+      security:
+        - adminAuth: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action:
+                  type: string
+                  enum: [approve, reject]
+                reason:
+                  type: string
+                  description: Required for rejection
+      responses:
+        '200':
+          description: Review completed
+        '401':
+          description: Authentication required
+        '403':
+          description: Admin access required
+
+components:
+  schemas:
+    Plugin:
+      type: object
+      required: [id, slug, name, description, version, downloadUrl, category]
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+          pattern: '^[a-z0-9-]+$'
+        name:
+          type: string
+        description:
+          type: string
+        longDescription:
+          type: string
+        version:
+          type: string
+        author:
+          $ref: '#/components/schemas/Author'
+        downloadUrl:
+          type: string
+          format: uri
+        packageSize:
+          type: integer
+          description: Size in bytes
+        checksum:
+          type: string
+          description: SHA-256 hash
+        category:
+          type: string
+          enum: [productivity, integrations, security, themes, workflows, utilities]
+        tags:
+          type: array
+          items:
+            type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        minVersion:
+          type: string
+          description: Minimum GitScribe version
+        maxVersion:
+          type: string
+          description: Maximum GitScribe version
+        platform:
+          type: string
+          enum: [windows, all]
+        downloads:
+          type: integer
+        rating:
+          type: number
+          minimum: 0
+          maximum: 5
+        reviewCount:
+          type: integer
+        publishedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        icon:
+          type: string
+          format: uri
+        screenshots:
+          type: array
+          items:
+            type: string
+            format: uri
+        videoUrl:
+          type: string
+          format: uri
+        featured:
+          type: boolean
+        verified:
+          type: boolean
+        deprecated:
+          type: boolean
+
+    IconPack:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        author:
+          $ref: '#/components/schemas/Author'
+        downloadUrl:
+          type: string
+          format: uri
+        packageSize:
+          type: integer
+        checksum:
+          type: string
+        previewUrl:
+          type: string
+          format: uri
+        style:
+          type: string
+          enum: [minimal, bold, neon, flat, gradient, outline, pixel, organic]
+        tags:
+          type: array
+          items:
+            type: string
+        downloads:
+          type: integer
+        rating:
+          type: number
+        publishedAt:
+          type: string
+          format: date-time
+        featured:
+          type: boolean
+        isDefault:
+          type: boolean
+
+    Theme:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        author:
+          $ref: '#/components/schemas/Author'
+        downloadUrl:
+          type: string
+          format: uri
+        packageSize:
+          type: integer
+        screenshotUrl:
+          type: string
+          format: uri
+        colors:
+          type: object
+          additionalProperties:
+            type: string
+        downloads:
+          type: integer
+        rating:
+          type: number
+        publishedAt:
+          type: string
+          format: date-time
+        featured:
+          type: boolean
+
+    Author:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        url:
+          type: string
+          format: uri
+        verified:
+          type: boolean
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        itemId:
+          type: string
+          format: uuid
+        itemType:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        userName:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        helpfulCount:
+          type: integer
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    adminAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Admin-level JWT token

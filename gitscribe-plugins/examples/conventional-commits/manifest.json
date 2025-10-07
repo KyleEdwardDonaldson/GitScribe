@@ -1,0 +1,38 @@
+{
+  "name": "Conventional Commits",
+  "version": "1.0.0",
+  "description": "Automatically format commit messages to Conventional Commits standard",
+  "author": {
+    "name": "GitScribe Team",
+    "email": "team@gitscribe.dev",
+    "url": "https://gitscribe.dev"
+  },
+  "main": "index.js",
+  "permissions": [
+    "git:operations"
+  ],
+  "gitscribe": {
+    "minVersion": "1.0.0"
+  },
+  "category": "productivity",
+  "tags": [
+    "commit",
+    "formatting",
+    "conventional-commits",
+    "standards"
+  ],
+  "keywords": [
+    "commit message",
+    "conventional",
+    "format",
+    "changelog",
+    "semver"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gitscribe/plugin-conventional-commits"
+  },
+  "homepage": "https://gitscribe.dev/plugins/conventional-commits",
+  "license": "MIT",
+  "icon": "icon.png"
+}

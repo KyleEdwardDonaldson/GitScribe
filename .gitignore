@@ -1,0 +1,125 @@
+# ========================================
+# CLOSED SOURCE COMPONENTS
+# ========================================
+# gitscribe-app is proprietary - exclude entirely
+gitscribe-app/
+
+# gitscribe-landing is private - exclude entirely
+gitscribe-landing/
+
+# ========================================
+# RUST (gitscribe-core)
+# ========================================
+target/
+**/*.rs.bk
+*.pdb
+
+# ========================================
+# C++ (gitscribe-shell)
+# ========================================
+build/
+bin/
+obj/
+*.obj
+*.dll
+*.exe
+*.lib
+*.pdb
+*.ilk
+*.exp
+*.suo
+*.user
+*.sdf
+*.opensdf
+*.db
+*.opendb
+ipch/
+.vs/
+
+# ========================================
+# NODE / NPM (landing, plugins)
+# ========================================
+node_modules/
+dist/
+.next/
+out/
+.astro/
+.vercel/
+.netlify/
+*.tsbuildinfo
+next-env.d.ts
+
+# npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# ========================================
+# ENVIRONMENT & SECRETS
+# ========================================
+.env
+.env*.local
+*.pem
+*.key
+*.cer
+*.p12
+credentials.json
+secrets/
+
+# ========================================
+# IDEs & EDITORS
+# ========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.code-workspace
+
+# ========================================
+# OS FILES
+# ========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================================
+# BUILD & TEMP FILES
+# ========================================
+*.tmp
+*.log
+*.bak
+*.cache
+
+# Icon artifacts
+*.ico.bak
+*-16.png
+*-32.png
+*-48.png
+*-128.png
+
+# Test output
+*.coverage
+coverage/
+test-results/
+
+# ========================================
+# INSTALLER / DEPLOYMENT
+# ========================================
+*.msi
+*.zip
+*.tar.gz
+installers/output/
+release/
+
+# ========================================
+# CACHE DATABASES
+# ========================================
+*.db
+*.sqlite
+*.sqlite3
+cache.db
+/gitbutler/

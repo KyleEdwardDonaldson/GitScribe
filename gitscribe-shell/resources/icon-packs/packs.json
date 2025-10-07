@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "default": "default",
+  "packs": [
+    {
+      "id": "default",
+      "name": "Aztec Bold (Default)",
+      "description": "Vibrant gradients with strong contrast - the default GitScribe theme",
+      "preview": "default/modified.ico"
+    },
+    {
+      "id": "aztec-bold",
+      "name": "Aztec Bold",
+      "description": "Vibrant gradients with strong contrast",
+      "preview": "aztec-bold/modified.ico"
+    },
+    {
+      "id": "coral-reef",
+      "name": "Coral Reef",
+      "description": "Ocean-inspired blues and coral tones",
+      "preview": "coral-reef/modified.ico"
+    },
+    {
+      "id": "neon-city",
+      "name": "Neon City",
+      "description": "Cyberpunk neon aesthetics for night coders",
+      "preview": "neon-city/modified.ico"
+    },
+    {
+      "id": "desert-sun",
+      "name": "Desert Sun",
+      "description": "Warm desert tones inspired by southwestern landscapes",
+      "preview": "desert-sun/modified.ico"
+    },
+    {
+      "id": "tropical-paradise",
+      "name": "Tropical Paradise",
+      "description": "Bright tropical colors full of energy",
+      "preview": "tropical-paradise/modified.ico"
+    },
+    {
+      "id": "electric-plasma",
+      "name": "Electric Plasma",
+      "description": "High-energy electric neon colors",
+      "preview": "electric-plasma/modified.ico"
+    },
+    {
+      "id": "sunset-vibes",
+      "name": "Sunset Vibes",
+      "description": "Warm sunset gradient colors",
+      "preview": "sunset-vibes/modified.ico"
+    },
+    {
+      "id": "candy-pop",
+      "name": "Candy Pop",
+      "description": "Sweet pastel colors with a playful touch",
+      "preview": "candy-pop/modified.ico"
+    },
+    {
+      "id": "fire-ice",
+      "name": "Fire & Ice",
+      "description": "Dramatic contrast between hot and cold colors",
+      "preview": "fire-ice/modified.ico"
+    }
+  ]
+}
