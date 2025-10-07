@@ -1,0 +1,40 @@
+# Created using wingetcreate
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+
+PackageIdentifier: KyleDonaldson.GitScribe.Status
+PackageVersion: 0.1.0
+PackageLocale: en-US
+Publisher: Kyle Donaldson
+PublisherUrl: https://gitscri.be
+PublisherSupportUrl: https://github.com/KyleEdwardDonaldson/GitScribe/issues
+# PrivacyUrl:
+Author: Kyle Donaldson
+PackageName: GitScribe Status
+PackageUrl: https://gitscri.be
+License: MPL-2.0
+LicenseUrl: https://github.com/KyleEdwardDonaldson/GitScribe/blob/main/LICENSE
+# Copyright:
+# CopyrightUrl:
+ShortDescription: Lightweight Git shell extension for Windows with overlay icons and status display
+Description: |-
+  GitScribe Status is a free, lightweight Windows shell extension that adds Git overlay icons and status display to Windows Explorer.
+
+  Features:
+  - Overlay icons for all Git file states (modified, added, deleted, ignored, clean, conflicted)
+  - Context menu showing repository status: "GitScribe | Clean", "GitScribe | Modified", etc.
+  - Fast cached status updates (<50ms)
+  - No app dependency - standalone shell extension
+  - Only ~2MB installed size
+
+  Perfect for developers who want visual Git indicators without a heavy application.
+Moniker: gitscribe-status
+Tags:
+  - git
+  - shell-extension
+  - overlay-icons
+  - windows
+  - explorer
+  - version-control
+  - developer-tools
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0
