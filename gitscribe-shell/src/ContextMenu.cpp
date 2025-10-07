@@ -165,6 +165,61 @@ STDMETHODIMP ContextMenu::QueryContextMenu(HMENU hMenu, UINT indexMenu,
 int ContextMenu::BuildSimpleMenu(HMENU hMenu, UINT insertPos, GitRepository* repo) {
     OutputDebugStringA("[GitScribe] BuildSimpleMenu called\n");
 
+// GitScribe Status v0.1: Single menu item with status, clicking copies path
+#ifdef GITSCRIBE_STATUS
+    // Get repository status for menu title
+    std::wstring menuTitle = L"GitScribe";
+    if (repo) {
+        try {
+            RepositoryInfo info = repo->GetInfo();
+            menuTitle = L"GitScribe | ";
+
+            // Priority order: State > Conflicts > Modifications > Clean
+            if (info.state == RepoState::Merging) {
+                menuTitle += L"Merging";
+            } else if (info.state == RepoState::Rebasing) {
+                menuTitle += L"Rebasing";
+            } else if (info.state == RepoState::CherryPicking) {
+                menuTitle += L"Cherry-Picking";
+            } else if (info.state == RepoState::Reverting) {
+                menuTitle += L"Reverting";
+            } else if (info.state == RepoState::Bisecting) {
+                menuTitle += L"Bisecting";
+            } else if (info.conflictedCount > 0) {
+                menuTitle += L"Conflicted";
+            } else if (!info.isClean || info.modifiedCount > 0) {
+                menuTitle += L"Modified";
+            } else {
+                menuTitle += L"Clean";
+            }
+        } catch (...) {
+            // Fallback to simple title on error
+            menuTitle = L"GitScribe";
+        }
+    }
+
+    // Insert single menu item (no submenu)
+    MENUITEMINFOW mii = { sizeof(mii) };
+    mii.fMask = MIIM_ID | MIIM_STRING | MIIM_BITMAP;
+    mii.wID = m_idCmdFirst + CMD_STATUS; // CMD_STATUS will copy path
+    mii.dwTypeData = const_cast<LPWSTR>(menuTitle.c_str());
+
+    // Use preloaded icon (fast!)
+    HBITMAP menuIcon = GetCache().GetMenuIcon();
+    if (menuIcon) {
+        mii.hbmpItem = menuIcon;
+    }
+
+    BOOL result = InsertMenuItemW(hMenu, insertPos, TRUE, &mii);
+    if (!result) {
+        OutputDebugStringA("[GitScribe] ERROR: InsertMenuItemW failed\n");
+        return 0;
+    }
+
+    OutputDebugStringA("[GitScribe] Status menu item inserted successfully\n");
+    return 1; // Return 1 item added to main menu
+
+#else // Full version with submenu
     // Create GitScribe submenu
     HMENU hSubMenu = CreatePopupMenu();
     if (!hSubMenu) {
@@ -240,6 +295,7 @@ int ContextMenu::BuildSimpleMenu(HMENU hMenu, UINT insertPos, GitRepository* rep
 
     OutputDebugStringA("[GitScribe] Simple menu inserted successfully\n");
     return 1; // Return 1 item added to main menu
+#endif
 }
 
 int ContextMenu::BuildGlobalMenu(HMENU hMenu, UINT insertPos) {
@@ -572,6 +628,35 @@ STDMETHODIMP ContextMenu::InvokeCommand(LPCMINVOKECOMMANDINFO pici) {
                 OutputDebugStringA("[GitScribe] Executing CMD_ABOUT\n");
                 MessageBoxW(pici->hwnd, L"GitScribe v0.1.0\n\nA luxury Git client for Windows\n\nCopyright \u00A9 2025",
                            L"About GitScribe", MB_OK | MB_ICONINFORMATION);
+                break;
+
+            case CMD_STATUS:
+                OutputDebugStringA("[GitScribe] Executing CMD_STATUS\n");
+                // Copy selected file path to clipboard
+                if (!m_selectedPaths.empty()) {
+                    std::wstring pathToCopy = m_selectedPaths[0];
+
+                    // Open clipboard
+                    if (OpenClipboard(pici->hwnd)) {
+                        EmptyClipboard();
+
+                        // Allocate global memory for the path
+                        size_t size = (pathToCopy.length() + 1) * sizeof(WCHAR);
+                        HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, size);
+
+                        if (hGlobal) {
+                            LPWSTR pGlobal = (LPWSTR)GlobalLock(hGlobal);
+                            if (pGlobal) {
+                                wcscpy_s(pGlobal, pathToCopy.length() + 1, pathToCopy.c_str());
+                                GlobalUnlock(hGlobal);
+                                SetClipboardData(CF_UNICODETEXT, hGlobal);
+                            }
+                        }
+
+                        CloseClipboard();
+                        OutputDebugStringA("[GitScribe] Path copied to clipboard\n");
+                    }
+                }
                 break;
 
             default:

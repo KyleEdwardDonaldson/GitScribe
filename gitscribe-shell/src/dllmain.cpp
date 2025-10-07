@@ -292,9 +292,11 @@ STDAPI DllRegisterServer() {
     hr = RegisterCLSID(CLSID_ContextMenu, L"GitScribe Context Menu");
     if (FAILED(hr)) return hr;
 
-    // Register property sheet
+#ifndef GITSCRIBE_STATUS
+    // Register property sheet (Full version only)
     hr = RegisterCLSID(CLSID_PropertySheet, L"GitScribe Property Sheet");
     if (FAILED(hr)) return hr;
+#endif
 
     // Register overlay handlers (prefix with space for high priority)
     hr = RegisterOverlay(L" GitScribeModified", CLSID_ModifiedOverlay);
@@ -319,9 +321,11 @@ STDAPI DllRegisterServer() {
     hr = RegisterContextMenu(CLSID_ContextMenu);
     if (FAILED(hr)) return hr;
 
-    // Register property sheet handler
+#ifndef GITSCRIBE_STATUS
+    // Register property sheet handler (Full version only)
     hr = RegisterPropertySheet(CLSID_PropertySheet);
     if (FAILED(hr)) return hr;
+#endif
 
     // Notify shell of changes
     SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
@@ -339,9 +343,13 @@ STDAPI DllUnregisterServer() {
     UnregisterOverlay(L" GitScribeConflicted");
     UnregisterOverlay(L" GitScribeIgnored");
 
-    // Unregister context menu and property sheet
+    // Unregister context menu
     UnregisterContextMenu();
+
+#ifndef GITSCRIBE_STATUS
+    // Unregister property sheet (Full version only)
     UnregisterPropertySheet();
+#endif
 
     // Unregister CLSIDs
     UnregisterCLSID(CLSID_ModifiedOverlay);
@@ -351,7 +359,10 @@ STDAPI DllUnregisterServer() {
     UnregisterCLSID(CLSID_ConflictedOverlay);
     UnregisterCLSID(CLSID_IgnoredOverlay);
     UnregisterCLSID(CLSID_ContextMenu);
+
+#ifndef GITSCRIBE_STATUS
     UnregisterCLSID(CLSID_PropertySheet);
+#endif
 
     // Notify shell of changes
     SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);

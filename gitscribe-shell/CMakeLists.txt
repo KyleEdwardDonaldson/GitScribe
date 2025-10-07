@@ -4,6 +4,9 @@ project(gitscribe-shell VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Build options
+option(GITSCRIBE_STATUS "Build GitScribe Status version (overlay icons + simple context menu)" OFF)
+
 # Output to bin directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -16,10 +19,13 @@ set(SOURCES
     src/GitRepository.cpp
     src/MenuContext.cpp
     src/ContextMenu.cpp
-    src/AppLauncher.cpp
-    src/PropertySheet.cpp
     src/PerformanceCache.cpp
 )
+
+# Add optional components for Full version
+if(NOT GITSCRIBE_STATUS)
+    list(APPEND SOURCES src/AppLauncher.cpp src/PropertySheet.cpp)
+endif()
 
 # Header files
 set(HEADERS
@@ -36,6 +42,12 @@ set(HEADERS
 
 # Create the DLL
 add_library(gitscribe-shell SHARED ${SOURCES} ${HEADERS})
+
+# Define preprocessor macros based on build options
+if(GITSCRIBE_STATUS)
+    target_compile_definitions(gitscribe-shell PRIVATE GITSCRIBE_STATUS)
+    message(STATUS "Building GitScribe Status version")
+endif()
 
 # Link against gitscribe-core and Windows libraries
 target_link_libraries(gitscribe-shell PRIVATE
