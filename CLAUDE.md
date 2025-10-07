@@ -1,8 +1,49 @@
 # GitScribe - Project Blueprint
 
+## 📁 Repository Structure
+
+**This is a MONOREPO with nested Git repositories:**
+
+```
+GitScribe/                    # Main monorepo (public, open source components)
+├── .git/                     # Main repo git
+├── gitscribe-core/           # Rust core library (open source, MPL-2.0)
+├── gitscribe-shell/          # Windows shell extension (open source, MPL-2.0)
+├── gitscribe-plugins/        # Plugin SDK (open source, MIT)
+├── gitscribe-app/            # Tauri application (separate nested repo)
+│   └── .git/                 # App has its own git repo
+└── gitscribe-landing/        # Landing site (separate nested repo)
+    └── .git/                 # Landing has its own git repo
+```
+
+**Why nested repos?**
+- `gitscribe-app` and `gitscribe-landing` are **proprietary/closed source**
+- They have their own `.git` folders and can be pushed to private repos
+- Main monorepo's `.gitignore` excludes them: `gitscribe-app/` and `gitscribe-landing/`
+- Each can be developed and versioned independently
+- Claude can work with all three simultaneously
+
+**Working with nested repos:**
+```bash
+# Commit to landing site
+cd gitscribe-landing
+git add -A && git commit -m "Update landing"
+git push origin main
+
+# Commit to app
+cd ../gitscribe-app
+git add -A && git commit -m "Update app"
+git push origin main
+
+# Commit to main monorepo
+cd ..
+git add -A && git commit -m "Update core/shell"
+git push origin main
+```
+
 ## 🎉 Current Status: Phase 2 - Production Ready!
 
-**Last Updated**: 2025-10-06
+**Last Updated**: 2025-10-07
 
 ### ✅ Recently Completed
 
