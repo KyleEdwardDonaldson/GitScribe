@@ -187,12 +187,43 @@ int ContextMenu::BuildSimpleMenu(HMENU hMenu, UINT insertPos, GitRepository* rep
 
     AddMenuItem(hSubMenu, CMD_SETTINGS, L"GitScribe Settings...");
 
+    // Get repository status for menu title
+    std::wstring menuTitle = L"GitScribe";
+    if (repo) {
+        try {
+            RepositoryInfo info = repo->GetInfo();
+            menuTitle = L"GitScribe | ";
+
+            // Priority order: State > Conflicts > Modifications > Clean
+            if (info.state == RepoState::Merging) {
+                menuTitle += L"Merging";
+            } else if (info.state == RepoState::Rebasing) {
+                menuTitle += L"Rebasing";
+            } else if (info.state == RepoState::CherryPicking) {
+                menuTitle += L"Cherry-Picking";
+            } else if (info.state == RepoState::Reverting) {
+                menuTitle += L"Reverting";
+            } else if (info.state == RepoState::Bisecting) {
+                menuTitle += L"Bisecting";
+            } else if (info.conflictedCount > 0) {
+                menuTitle += L"Conflicted";
+            } else if (!info.isClean || info.modifiedCount > 0) {
+                menuTitle += L"Modified";
+            } else {
+                menuTitle += L"Clean";
+            }
+        } catch (...) {
+            // Fallback to simple title on error
+            menuTitle = L"GitScribe";
+        }
+    }
+
     // Insert GitScribe submenu into main menu
     MENUITEMINFOW mii = { sizeof(mii) };
     mii.fMask = MIIM_SUBMENU | MIIM_STRING | MIIM_BITMAP;
     // DO NOT set wID for submenu items - it confuses Windows shell
     mii.hSubMenu = hSubMenu;
-    mii.dwTypeData = const_cast<LPWSTR>(L"GitScribe");
+    mii.dwTypeData = const_cast<LPWSTR>(menuTitle.c_str());
 
     // Use preloaded icon (fast!)
     HBITMAP menuIcon = GetCache().GetMenuIcon();
@@ -304,29 +335,29 @@ int ContextMenu::BuildMenu(HMENU hMenu, UINT insertPos, const MenuContext& conte
             break;
     }
 
-    // Build menu label with status
+    // Build menu label with status (format: "GitScribe | Status")
     std::wstring menuLabel = L"GitScribe";
     switch (context.GetType()) {
         case ContextType::FileModified:
-            menuLabel = L"\U0001F4DD Modified | GitScribe";
+            menuLabel = L"GitScribe | Modified";
             break;
         case ContextType::FileUntracked:
-            menuLabel = L"\u2795 Untracked | GitScribe";
+            menuLabel = L"GitScribe | Untracked";
             break;
         case ContextType::FileConflicted:
-            menuLabel = L"\u26A0\uFE0F Conflicted | GitScribe";
+            menuLabel = L"GitScribe | Conflicted";
             break;
         case ContextType::RepoDirty:
-            menuLabel = L"\U0001F4DD Changes | GitScribe";
+            menuLabel = L"GitScribe | Modified";
             break;
         case ContextType::RepoAhead:
-            menuLabel = L"\u2191 Push needed | GitScribe";
+            menuLabel = L"GitScribe | Push Needed";
             break;
         case ContextType::MergeInProgress:
-            menuLabel = L"\u26A0\uFE0F Merge | GitScribe";
+            menuLabel = L"GitScribe | Merging";
             break;
         case ContextType::RepoClean:
-            menuLabel = L"\u2705 Clean | GitScribe";
+            menuLabel = L"GitScribe | Clean";
             break;
         default:
             menuLabel = L"GitScribe";

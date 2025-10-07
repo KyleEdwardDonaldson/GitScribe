@@ -544,10 +544,10 @@ GitScribe is a modern Windows Git client that combines the contextual convenienc
 
 ## Contact & Resources
 
-- Project Repository: github.com/[org]/gitscribe
-- Documentation: gitscribe.dev/docs
+- Project Repository: github.com/KyleEdwardDonaldson/gitscribe
+- Documentation: gitscri.be/docs
 - Discord: discord.gg/gitscribe
-- Email: team@gitscribe.dev
+- Email: kyle@gitscri.be
 
 ---
 

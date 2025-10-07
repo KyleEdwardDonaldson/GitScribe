@@ -27,23 +27,38 @@ This is a monorepo containing all GitScribe components:
 
 ## 🚀 Quick Start
 
-### GitScribe Status (Free, Overlay Icons Only)
+### GitScribe Status (Available Now - Free Forever)
 
-Download the lightweight version for just visual Git status indicators:
+Download the lightweight version for visual Git status indicators and context menu display:
 
 ```powershell
-# Coming soon - 2MB installer
-winget install GitScribe.Status
+# Download from releases page
+# Coming soon to winget: winget install GitScribe.Status
 ```
 
 **Features:**
-- Status overlay icons (modified, added, deleted, etc.)
-- Cached status updates < 50ms
-- No dependencies, minimal resources
+- 📁 Status overlay icons (modified, added, deleted, ignored, clean)
+- 🖱️ Context menu with status: "GitScribe | Clean", "GitScribe | Modified", etc.
+- ⚡ Fast cached status updates < 50ms
+- 💾 Tiny 2MB installer, minimal resource usage
+- 🆓 Free forever, no account required
+
+**Perfect for developers who want:**
+- Visual Git indicators in Windows Explorer
+- No heavy applications running in the background
+- Quick status checks at a glance
 
 ### GitScribe Full (Coming Soon)
 
-Full-featured Git client with context menus, commit dialogs, and more.
+Full-featured Git client with advanced operations, commit dialogs, and team collaboration.
+
+**Will include:**
+- Everything in Status, plus:
+- Full context menu operations (commit, push, pull, etc.)
+- Beautiful Electron app with diff viewer
+- Advanced Git operations UI (rebase, cherry-pick, stash)
+- Repository management features
+- Free for personal use
 
 ## 🏗️ Architecture
 
